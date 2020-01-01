@@ -14,7 +14,7 @@ function setup {
 }
 
 function appendIfNotExist {
-	grep -q '$1' $2 || echo '$1' >> $2
+	grep -q "$1" $2 || echo "$1" >> $2
 }
 
 function setupGo {
