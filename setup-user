@@ -42,7 +42,7 @@ export KEEP_GITHUB_AUTH=
 EOF
 
     appendIfNotExist 'source $HOME/.userrc' $HOME/.bashrc
-    source $HOME/.userrc
+    echo "run 'source $HOME/.userrc' to get user environment now."
 }
 
 setup
