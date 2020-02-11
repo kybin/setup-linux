@@ -53,7 +53,7 @@ export GOPATH=$HOME
 export PATH=$GOPATH/bin:$PATH
 
 # keep
-export KEEP_GITHUB_USER=
+export KEEP_GITHUB_USER="kybin"
 export KEEP_GITHUB_AUTH=
 EOF
 
