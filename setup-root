@@ -23,6 +23,16 @@ function appendIfNotExist {
 	grep -q "$1" $2 || echo "$1" >> $2
 }
 
+function hasCmd {
+    command -v $1 >/dev/null 2>&1
+    if [ $? = 0 ]; then
+        echo "1"
+        return 1
+    fi
+    echo "0"
+    return 0
+}
+
 function setupGo {
     echo "setting up go"
     if [ -d /usr/local/go ]; then
@@ -40,9 +50,12 @@ function setupGo {
     source /etc/profile.d/go.sh
 }
 
-
 function setupTor {
     echo "setting up tor"
+    if [ $(hasCmd tor) = "1" ]; then
+        echo "'tor' exist. skip."
+        return
+    fi
     git clone https://github.com/kybin/tor
     cd tor
     go build -o /usr/local/bin
@@ -52,6 +65,10 @@ function setupTor {
 
 function setupKeep {
     echo "setting up keep"
+    if [ $(hasCmd keep) = "1" ]; then
+        echo "'keep' exist. skip."
+        return
+    fi
     git clone https://github.com/lazypic/keep
     cd keep
     go build -o /usr/local/bin
@@ -61,6 +78,10 @@ function setupKeep {
 
 function setupRipgrep {
     echo "setting up rg"
+    if [ $(hasCmd rg) = "1" ]; then
+        echo "'rg' exist. skip."
+        return
+    fi
     wget -nc -q https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep-11.0.2-i686-unknown-linux-musl.tar.gz
     tar -zxf ripgrep-11.0.2-i686-unknown-linux-musl.tar.gz ripgrep-11.0.2-i686-unknown-linux-musl/rg
     mv ripgrep-11.0.2-i686-unknown-linux-musl/rg /usr/local/bin
