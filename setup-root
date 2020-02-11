@@ -29,9 +29,9 @@ function setupGo {
     wget -nc -q https://dl.google.com/go/$GO.linux-amd64.tar.gz
     tar -C /usr/local -zxf $GO.linux-amd64.tar.gz
     rm $GO.linux-amd64.tar.gz
-    appendIfNotExist 'export PATH=/usr/local/go/bin:$PATH' /etc/profile
-    appendIfNotExist 'export GOPATH=$HOME' $HOME/.bashrc
-    appendIfNotExist 'export PATH=$GOPATH/bin:$PATH' $HOME/.bashrc
+    touch /etc/profile.d/go.sh
+    appendIfNotExist 'export PATH=/usr/local/go/bin:$PATH' /etc/profile.d/go.sh
+    source /etc/profile.d/go.sh
 }
 
 
