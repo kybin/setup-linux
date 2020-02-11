@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # setup은 마지막에 실행됨
 function setup {
@@ -20,13 +21,17 @@ function appendIfNotExist {
 function setupGo {
     echo "setting up go"
     if [ -d /usr/local/go ]; then
-        wget -nc -q https://dl.google.com/go/go1.13.5.linux-amd64.tar.gz
-        tar -C /usr/local -zxf go1.13.5.linux-amd64.tar.gz
-        appendIfNotExist 'export PATH=/usr/local/go/bin:$PATH' /etc/profile
-        appendIfNotExist 'export GOPATH=$HOME' $HOME/.bashrc
-        appendIfNotExist 'export PATH=$GOPATH/bin:$PATH' $HOME/.bashrc
-        rm go1.13.5.linux-amd64.tar.gz
+        echo "'/usr/local/go' exists. skip."
     fi
+
+    GO=go1.13.7
+
+    wget -nc -q https://dl.google.com/go/$GO.linux-amd64.tar.gz
+    tar -C /usr/local -zxf $GO.linux-amd64.tar.gz
+    rm $GO.linux-amd64.tar.gz
+    appendIfNotExist 'export PATH=/usr/local/go/bin:$PATH' /etc/profile
+    appendIfNotExist 'export GOPATH=$HOME' $HOME/.bashrc
+    appendIfNotExist 'export PATH=$GOPATH/bin:$PATH' $HOME/.bashrc
 }
 
 
