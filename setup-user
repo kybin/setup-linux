@@ -20,6 +20,7 @@ function setupGit {
 function setupUserrc {
     if [ -e $HOME/.userrc ]; then
         echo "'$HOME/.userrc' exists. skip'"
+        return
     fi
 
     cat > $HOME/.userrc << EOF

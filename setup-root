@@ -27,6 +27,7 @@ function setupGo {
     echo "setting up go"
     if [ -d /usr/local/go ]; then
         echo "'/usr/local/go' exists. skip."
+        return
     fi
 
     GO=go1.13.7
