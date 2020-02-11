@@ -12,6 +12,11 @@ function setup {
     setupTor
     setupKeep
     setupRipgrep
+
+    # 이 시스템의 각 유저들이 따로 이 레포지터리를 클론하지 않게 함
+    cp $(dirname ${BASH_SOURCE})/setup-user /usr/local/bin
+    # 사용자 셑업 겸 복사가 잘 되었는지 검사
+    setup-user
 }
 
 function appendIfNotExist {
