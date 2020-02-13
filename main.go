@@ -10,6 +10,7 @@ import (
 	"os/exec"
 )
 
+// userConfig는 .userrc에 들어갈 내용이다.
 var userConfig = `
 # ps1
 parse_git_branch() {
@@ -44,6 +45,7 @@ export KEEP_GITHUB_USER="kybin"
 export KEEP_GITHUB_AUTH=
 `
 
+// appendIfNotExist는 해당 파일에 필요한 줄이 없을때 추가해준다.
 func appendIfNotExist(fname string, s string) error {
 	if s == "" {
 		return fmt.Errorf("empty string is invalid")
@@ -83,10 +85,12 @@ func appendIfNotExist(fname string, s string) error {
 	return nil
 }
 
+// Runner는 Run을 실행하고 그 에러를 반환한다.
 type Runner interface {
 	Run() error
 }
 
+// download는 특정 URI에 있는 파일을 내 디스크에 다운로드 받아주는 Runner이다.
 type download struct {
 	from string
 	to   string
@@ -118,6 +122,7 @@ func (d download) Run() error {
 	return err
 }
 
+// command는 특정 디렉토리에서 명령을 실행하는 Runner이다.
 type command struct {
 	dir string
 	cmd *exec.Cmd
@@ -134,6 +139,7 @@ func (c command) Run() error {
 	return c.cmd.Run()
 }
 
+// installGo는 go를 설치한다.
 func installGo() error {
 	fmt.Println("setting up go")
 	_, err := os.Stat("/usr/local/go")
@@ -158,6 +164,7 @@ func installGo() error {
 	return nil
 }
 
+// installGoimports는 go 코드에 사용된 모듈이 빠져있을때 자동으로 불러주는 goimport를 설치한다.
 func installGoimports() error {
 	fmt.Println("setting up goimports")
 	_, err := exec.LookPath("goimports")
@@ -180,6 +187,7 @@ func installGoimports() error {
 	return nil
 }
 
+// installTor는 내 에디터 tor를 설치한다.
 func installTor() error {
 	fmt.Println("setting up tor")
 	_, err := exec.LookPath("tor")
@@ -202,6 +210,7 @@ func installTor() error {
 	return nil
 }
 
+// installKeep은 레포지터리를 KEEPPATH 아래에 다운로드 받는 keep을 설치한다.
 func installKeep() error {
 	fmt.Println("setting up keep")
 	_, err := exec.LookPath("keep")
@@ -224,6 +233,7 @@ func installKeep() error {
 	return nil
 }
 
+// installRipgrep은 grep과 비슷하지만 더 나은 rg를 설치한다.
 func installRipgrep() error {
 	fmt.Println("setting up rg")
 	_, err := exec.LookPath("rg")
@@ -249,6 +259,7 @@ func installRipgrep() error {
 	return nil
 }
 
+// setupGit은 항상 사용하는 git 설정을 지정한다.
 func setupGit() error {
 	fmt.Println("setting up git")
 	_, err := exec.LookPath("git")
@@ -272,6 +283,8 @@ func setupGit() error {
 	return nil
 }
 
+// setupUserrc는 홈 디렉토리에 .userrc를 설치한다.
+// .userrc는 .bashrc에서 부르게 된다.
 func setupUserrc() error {
 	fmt.Println("setting up .userrc")
 	home, err := os.UserHomeDir()
@@ -294,14 +307,20 @@ func setupUserrc() error {
 	if err != nil {
 		return err
 	}
+	err = appendIfNotExist(home+"/.bashrc", "source $HOME/.userrc")
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
+// die는 에러를 출력하고 프로그램을 종료한다.
 func die(err error) {
 	fmt.Fprintln(os.Stderr, err)
 	os.Exit(1)
 }
 
+// setupRoot는 루트 계정에서 필요한 셋업이다.
 func setupRoot() error {
 	funcs := []func() error{
 		installGo,
@@ -319,6 +338,7 @@ func setupRoot() error {
 	return nil
 }
 
+// setupUser는 루트를 포함한 모든 계정에서 필요한 셋업이다.
 func setupUser() error {
 	funcs := []func() error{
 		setupGit,
