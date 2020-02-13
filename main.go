@@ -90,19 +90,26 @@ type Runner interface {
 type download struct {
 	from string
 	to   string
+	perm os.FileMode
 }
 
-func Download(from string, to string) download {
-	return download{from: from, to: to}
+func Download(from string, to string, perm os.FileMode) download {
+	return download{from: from, to: to, perm: perm}
 }
 
 func (d download) Run() error {
+	_, err := os.Stat(d.to)
+	if err == nil {
+		return fmt.Errorf("download destination '" + d.to + "' exists. remove it first.")
+	} else if !os.IsNotExist(err) {
+		return err
+	}
 	resp, err := http.Get(d.from)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
-	out, err := os.Create(d.to)
+	out, err := os.OpenFile(d.to, os.O_CREATE|os.O_WRONLY, d.perm)
 	if err != nil {
 		return err
 	}
@@ -137,7 +144,7 @@ func installGo() error {
 		return err
 	}
 	runners := []Runner{
-		Download("https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz", "go.tar.gz"),
+		Download("https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz", "go.tar.gz", 0644),
 		Command("", exec.Command("tar", "-C", "/usr/local", "-zxf", "go.tar.gz")),
 		Command("", exec.Command("rm", "go.tar.gz")),
 	}
@@ -162,7 +169,7 @@ func installGoimports() error {
 		return err
 	}
 	runners := []Runner{
-		Download("https://github.com/kybin/goimports/releases/download/tip/goimports", "/usr/local/bin/goimports"),
+		Download("https://github.com/kybin/goimports/releases/download/tip/goimports", "/usr/local/bin/goimports", 0755),
 	}
 	for _, r := range runners {
 		err := r.Run()
@@ -184,7 +191,7 @@ func installTor() error {
 		return err
 	}
 	runners := []Runner{
-		Download("https://github.com/kybin/tor/releases/download/tip/tor", "/usr/local/bin/tor"),
+		Download("https://github.com/kybin/tor/releases/download/tip/tor", "/usr/local/bin/tor", 0755),
 	}
 	for _, r := range runners {
 		err := r.Run()
@@ -206,7 +213,7 @@ func installKeep() error {
 		return err
 	}
 	runners := []Runner{
-		Download("https://github.com/lazypic/keep/releases/download/tip/keep", "/usr/local/bin/keep"),
+		Download("https://github.com/lazypic/keep/releases/download/tip/keep", "/usr/local/bin/keep", 0755),
 	}
 	for _, r := range runners {
 		err := r.Run()
@@ -228,7 +235,7 @@ func installRipgrep() error {
 		return err
 	}
 	runners := []Runner{
-		Download("https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep-11.0.2-i686-unknown-linux-musl.tar.gz", "rg.tar.gz"),
+		Download("https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep-11.0.2-i686-unknown-linux-musl.tar.gz", "rg.tar.gz", 0644),
 		Command("", exec.Command("tar", "-zxf", "rg.tar.gz", "ripgrep-11.0.2-i686-unknown-linux-musl/rg", "--strip-components", "1")),
 		Command("", exec.Command("mv", "rg", "/usr/local/bin/rg")),
 		Command("", exec.Command("rm", "rg.tar.gz")),
@@ -277,6 +284,10 @@ func setupUserrc() error {
 		fmt.Println("'" + userrc + "' exists. skip.")
 		return nil
 	} else if !os.IsNotExist(err) {
+		return err
+	}
+	err = os.MkdirAll(home+"/.jd", 0755)
+	if err != nil {
 		return err
 	}
 	err = appendIfNotExist(userrc, userConfig)
