@@ -273,6 +273,8 @@ func setupGit() error {
 	runners := []Runner{
 		Command("", exec.Command("git", "config", "--global", "user.email", "kybinz@gmail.com")),
 		Command("", exec.Command("git", "config", "--global", "user.name", "kim yongbin")),
+		Command("", exec.Command("git", "config", "--global", "push.default", "current")),
+		Command("", exec.Command("git", "config", "--global", "pull.default", "current")),
 	}
 	for _, r := range runners {
 		err := r.Run()
