@@ -259,6 +259,33 @@ func installRipgrep() error {
 	return nil
 }
 
+// installCockroachDB는 roi 개발에 사용하는 cockroach DB를 설치한다.
+func installCockroachDB() error {
+	fmt.Println("setting up cockroachdb")
+	_, err := exec.LookPath("cockroach")
+	if err == nil {
+		fmt.Println("'cockroach' exist. skip.")
+		return nil
+	}
+	if !errors.Is(err, exec.ErrNotFound) {
+		return err
+	}
+	runners := []Runner{
+		Download("https://binaries.cockroachdb.com/cockroach-v19.2.4.linux-amd64.tgz", "cockroach.tgz", 0644),
+		Command("", exec.Command("tar", "-xzf", "cockroach.tgz")),
+		Command("", exec.Command("mv", "cockroach-v19.2.4.linux-amd64/cockroach", "/usr/local/bin")),
+		Command("", exec.Command("rm", "-rf", "cockroach-v19.2.4.linux-amd64")),
+		Command("", exec.Command("rm", "-f", "cockroach.tgz")),
+	}
+	for _, r := range runners {
+		err := r.Run()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // setupGit은 항상 사용하는 git 설정을 지정한다.
 func setupGit() error {
 	fmt.Println("setting up git")
@@ -330,6 +357,7 @@ func setupRoot() error {
 		installTor,
 		installKeep,
 		installRipgrep,
+		installCockroachDB,
 	}
 	for _, fn := range funcs {
 		err := fn()
