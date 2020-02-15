@@ -343,6 +343,10 @@ func setupUserrc() error {
 	if err != nil {
 		return err
 	}
+	err = appendIfNotExist(home+"/.profile", "source $HOME/.userrc")
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
