@@ -41,6 +41,20 @@ function _jd {
     fi
 }
 complete -F _jd jd
+function add-jd {
+	if [ "$1" = "" ]; then
+		echo "need link name"
+		return 1
+	fi
+	ln -s "$PWD" "$HOME/.jd/$1"
+}
+function del-jd {
+	if [ "$1" = "" ]; then
+		echo "need link name"
+		return 1
+	fi
+	rm -f "$HOME/.jd/$1"
+}
 
 # go
 export GOPATH=$HOME
