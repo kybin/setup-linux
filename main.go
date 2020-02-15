@@ -12,6 +12,9 @@ import (
 
 // userConfig는 .userrc에 들어갈 내용이다.
 var userConfig = `
+# ls
+alias ls='ls --color'
+
 # ps1
 parse_git_branch() {
     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
