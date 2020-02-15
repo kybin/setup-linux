@@ -13,7 +13,7 @@ import (
 // userConfig는 .userrc에 들어갈 내용이다.
 var userConfig = `
 # ls
-alias ls='ls --color'
+alias ls='ls --color=auto'
 
 # less
 export LESSCHARSET="utf-8"
