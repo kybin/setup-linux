@@ -29,7 +29,11 @@ export EDITOR=tor
 
 # jd
 function jd {
-    cd -P "$HOME/.jd/$1"
+	if [ "$1" = "" ]; then
+		echo "need link name"
+		return 1
+	fi
+	cd -P "$HOME/.jd/$1"
 }
 function _jd {
     COMPREPLY=()
