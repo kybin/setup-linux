@@ -65,8 +65,8 @@ export GOPATH=$HOME
 export PATH=$GOPATH/bin:$PATH
 
 # keep
-export KEEP_GITHUB_USER="kybin"
-export KEEP_GITHUB_AUTH=
+export GITHUB_USER="kybin"
+export GITHUB_AUTH=
 `
 
 // appendIfNotExist는 해당 파일에 필요한 줄이 없을때 추가해준다.
