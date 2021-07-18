@@ -174,7 +174,7 @@ func installGo() error {
 		return err
 	}
 	runners := []Runner{
-		Download("https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz", "go.tar.gz", 0644),
+		Download("https://dl.google.com/go/go1.16.6.linux-amd64.tar.gz", "go.tar.gz", 0644),
 		Command("", exec.Command("tar", "-C", "/usr/local", "-zxf", "go.tar.gz")),
 		Command("", exec.Command("rm", "go.tar.gz")),
 	}
